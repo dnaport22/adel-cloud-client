@@ -1,0 +1,7 @@
+config/
+credentials.json
+device_instance.json
+device_model.json
+.idea/
+.DS_Store
+.gradle/
