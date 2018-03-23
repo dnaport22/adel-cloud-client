@@ -2,7 +2,9 @@ package mautini.assistant.demo;
 
 import mautini.assistant.demo.api.AssistantClient;
 import mautini.assistant.demo.authentication.AuthenticationHelper;
+import mautini.assistant.demo.client.audio.AudioPlayer;
 import mautini.assistant.demo.config.AssistantConf;
+import mautini.assistant.demo.config.AudioConf;
 import mautini.assistant.demo.config.AuthenticationConf;
 import mautini.assistant.demo.config.DeviceRegisterConf;
 import mautini.assistant.demo.device.DeviceRegister;
@@ -14,6 +16,9 @@ import com.typesafe.config.ConfigBeanFactory;
 import com.typesafe.config.ConfigFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class GoogleAssistantClient {
@@ -29,6 +34,7 @@ public class GoogleAssistantClient {
         AuthenticationConf authenticationConf = ConfigBeanFactory.create(root.getConfig("authentication"), AuthenticationConf.class);
         DeviceRegisterConf deviceRegisterConf = ConfigBeanFactory.create(root.getConfig("deviceRegister"), DeviceRegisterConf.class);
         AssistantConf assistantConf = ConfigBeanFactory.create(root.getConfig("assistant"), AssistantConf.class);
+        AudioConf audioConf = ConfigBeanFactory.create(root.getConfig("audio"), AudioConf.class);
 
         // Authentication
         authenticationHelper = new AuthenticationHelper(authenticationConf);
@@ -51,10 +57,9 @@ public class GoogleAssistantClient {
         assistantClient = new AssistantClient(authenticationHelper.getOAuthCredentials(), assistantConf,
                 deviceRegister.getDeviceModel(), deviceRegister.getDevice());
 
-
     }
 
-    public String requestAssistant(String query) {
+    public Map requestAssistant(String query) {
         byte[] queryByte = query.getBytes();
 
         byte[] response = new byte[0];
@@ -65,9 +70,14 @@ public class GoogleAssistantClient {
         }
 
         if (response.length > 0) {
-            return assistantClient.getStringResponse();
+            Map res = new HashMap();
+            res.put("text", assistantClient.getStringResponse());
+            res.put("audio", response);
+            return res;
         } else {
-            return "No response from the API";
+            Map res = new HashMap();
+            res.put("text", "No response from the API");
+            return res;
         }
     }
 }

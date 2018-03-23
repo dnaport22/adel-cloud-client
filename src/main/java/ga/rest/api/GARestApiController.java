@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import mautini.assistant.demo.GoogleAssistantClient;
 
+import java.util.Map;
+
 @Controller
 @RequestMapping("/ga-rest-api")
 public class GARestApiController {
@@ -18,7 +20,7 @@ public class GARestApiController {
     @RequestMapping(method=RequestMethod.GET)
     public @ResponseBody
     GARestApiResponse askForAssistance(@RequestParam(value="query", required=false, defaultValue="hi") String query) {
-        String response = null;
+        Map response = null;
         try {
             GoogleAssistantClient googleAssistantClient = new GoogleAssistantClient();
             response = googleAssistantClient.requestAssistant(query);
